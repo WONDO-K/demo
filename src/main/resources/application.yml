@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: demo
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3305/demo?serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+jwt:
+  secret: e13af114d471424d6c9f2b7d03c3e25e630f269fbb3587f35068cb7d253150f568812b114afd8fd6941a005cdcf64b8b8baec4ce9de512b6aaad9ba732c6eee4
+  expiration: 1296000000
+
+logging:
+  level:
+    com.example.todolist: debug
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+
+server:
+  port: 8080
