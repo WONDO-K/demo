@@ -19,34 +19,51 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // BCryptPasswordEncoder 빈을 생성하여 암호화 관련 기능을 제공
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+    // HTTP 보안 구성을 위한 SecurityFilterChain 빈 설정
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                // CSRF(Cross-Site Request Forgery) 방어 기능 비활성화
                 .csrf(CsrfConfigurer<HttpSecurity>::disable)
-                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))    // H2 콘솔 사용을 위한 설정
-                .authorizeHttpRequests(requests ->
-                        requests.requestMatchers(
-                                        "/api/v1/**/auth/**", // API v1 버전의 인증 관련 API는 모두 허용
-                                        "/api/v1/**/any/**", // API v1 버전의 일반 API는 모두 허용
-                                        "/swagger-resources/**", // 스웨거 리소스에 대한 요청은 모두 허용
-                                        "/configuration/ui", // 스웨거 UI 설정에 대한 요청은 모두 허용
-                                        "/configuration/security", // 스웨거 보안 설정에 대한 요청은 모두 허용
-                                        "/swagger-ui/**", // 스웨거 UI 페이지에 대한 요청은 모두 허용
-                                        "/webjars/**", // 웹 자원(JAR 파일)에 대한 요청은 모두 허용
-                                        "/v3/api-docs/**" // 스웨거 3.0 이상의 API 문서 엔드포인트는 모두 허용
-                                ).permitAll()    // requestMatchers의 인자로 전달된 url은 모두에게 허용
-                                .requestMatchers(PathRequest.toH2Console()).permitAll()    // H2 콘솔 접속은 모두에게 허용
 
-                                .anyRequest().authenticated()    // 그 외의 모든 요청은 인증 필요
+                /**
+                 * X-Frame-Options 헤더 설정을 SAMEORIGIN으로 지정하여 Clickjacking 공격 방지
+                 * Clickjacking : 사용자가 의도하지 않은 클릭 동작을 유도하여 악의적인 행위를 하도록 만드는 공격 기법.
+                 * */
+                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
+
+                // HTTP 요청에 대한 접근 제한 및 권한 설정
+                .authorizeHttpRequests(requests ->
+                        requests
+                                // 특정 API 경로 및 스웨거 관련 리소스에 대한 요청은 모두 허용
+                                .requestMatchers(
+                                        "/api/v1/**/auth/**", // 인증 관련 API 경로
+                                        "/api/v1/**/any/**",  // 일반 API 경로
+                                        "/swagger-resources/**", // 스웨거 리소스
+                                        "/configuration/ui",    // 스웨거 UI 설정
+                                        "/configuration/security", // 스웨거 보안 설정
+                                        "/swagger-ui/**",       // 스웨거 UI 페이지
+                                        "/webjars/**",          // 웹 자원(JAR 파일)
+                                        "/v3/api-docs/**"       // 스웨거 3.0 이상 API 문서 엔드포인트
+                                ).permitAll() // 모든 사용자에게 허용
+
+                                // H2 데이터베이스 콘솔 접근을 모두에게 허용
+                                .requestMatchers(PathRequest.toH2Console()).permitAll()
+
+                                // 그 외의 모든 요청은 인증 필요
+                                .anyRequest().authenticated()
                 )
+
+                // 세션 관리 설정: STATELESS로 설정하여 세션을 사용하지 않음
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )    // 세션을 사용하지 않으므로 STATELESS 설정
-                .build();
+                )
+                .build(); // 보안 설정을 빌드하여 SecurityFilterChain 반환
     }
 }
