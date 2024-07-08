@@ -32,7 +32,7 @@ public class JwtFilter extends GenericFilterBean {
 
     /**
      * JwtFilter 생성자.
-     * @param tokenProvider JWT 토큰을 생성하고 검증하는 TokenProvider 객체
+     * @param tokenProvider JWT 토큰을 생성하고 검증하는 TokenProvider 객체.
      */
     public JwtFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
