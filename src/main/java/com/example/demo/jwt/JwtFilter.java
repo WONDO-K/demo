@@ -22,12 +22,11 @@ public class JwtFilter extends GenericFilterBean {
 
     // 로그 처리
     private final Logger log = LoggerFactory.getLogger(getClass());
-    
     // HTTP 요청 헤더에서 JWT 토큰을 가져오기 위한 헤더 이름
     private static final String AUTHORIZATION_HEADER = "Authorization";
     // JWT 토큰의 시작을 나타내는 Bearer scheme prefix
     private static final String BEARER_PREFIX = "Bearer ";
-    
+
     private final TokenProvider tokenProvider;
 
     /**

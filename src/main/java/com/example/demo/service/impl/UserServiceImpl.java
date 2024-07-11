@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public TokenDto doLogin(LoginRequestDto loginDto) {
+
         // 아이디와 비밀번호를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPw());
