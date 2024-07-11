@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @AllArgsConstructor
@@ -24,6 +27,35 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    // CORS 설정을 위한 CorsConfigurationSource 빈 추가
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        // URL 기반의 CORS 설정을 제공하는 UrlBasedCorsConfigurationSource 객체를 생성합니다.
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        // CORS 설정을 위한 CorsConfiguration 객체를 생성합니다.
+        CorsConfiguration config = new CorsConfiguration();
+
+        // 자격 증명 정보(cookie, HTTP 인증)를 포함한 요청을 허용하도록 설정합니다.
+        config.setAllowCredentials(true);
+
+        // 모든 도메인에서의 요청을 허용하도록 설정합니다.
+        config.addAllowedOriginPattern("*");
+
+        // 모든 HTTP 헤더를 허용하도록 설정합니다.
+        config.addAllowedHeader("*");
+
+        // 모든 HTTP 메서드(GET, POST 등)를 허용하도록 설정합니다.
+        config.addAllowedMethod("*");
+
+        // 생성한 CORS 설정을 모든 경로("/**")에 대해 적용합니다.
+        source.registerCorsConfiguration("/**", config);
+
+        // 설정된 CORS 소스를 반환합니다.
+        return source;
+    }
+
 
     // HTTP 보안 구성을 위한 SecurityFilterChain 빈 설정
     @Bean
